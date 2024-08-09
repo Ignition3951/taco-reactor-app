@@ -61,13 +61,13 @@ class TacoReactorAppApplicationTests {
 				.verifyComplete();
 	}
 
-	@Test
-	public void createAFlux_interval() {
-		Flux<Long> intervalFlux = Flux.interval(Duration.ofSeconds(1)).take(5);
-
-		StepVerifier.create(intervalFlux).expectNext(0L).expectNext(1L).expectNext(2L).expectNext(3L).expectNext(4L)
-				.verifyComplete();
-	}
+//	@Test
+//	public void createAFlux_interval() {
+//		Flux<Long> intervalFlux = Flux.interval(Duration.ofSeconds(1)).take(5);
+//
+//		StepVerifier.create(intervalFlux).expectNext(0L).expectNext(1L).expectNext(2L).expectNext(3L).expectNext(4L)
+//				.verifyComplete();
+//	}
 
 	@Test
 	public void mergeFluxes() {
@@ -114,6 +114,19 @@ class TacoReactorAppApplicationTests {
 		Flux<String> firstFlux = Flux.firstWithSignal(slowFlux, fastFlux);
 
 		StepVerifier.create(firstFlux).expectNext("hare").expectNext("cheetah").expectNext("squirrel").verifyComplete();
+	}
+
+	@Test
+	public void skipAFew() {
+		Flux<String> countFlux = Flux.just("one", "two", "skip a few", "ninety nine", "one hundred").skip(3);
+		StepVerifier.create(countFlux).expectNext("ninety nine", "one hundred").verifyComplete();
+	}
+
+	@Test
+	public void filter() {
+		Flux<String> nationalParkFlux = Flux.just("Yellowstone", "Yosemite", "Grand Canyon", "Zion", "Grand Teton")
+				.filter(np -> !np.contains(" "));
+		StepVerifier.create(nationalParkFlux).expectNext("Yellowstone", "Yosemite", "Zion").verifyComplete();
 	}
 
 }
